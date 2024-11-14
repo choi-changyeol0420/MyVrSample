@@ -5,6 +5,9 @@ using UnityEngine.InputSystem;
 
 namespace MyVrSample
 {
+    /// <summary>
+    /// 컨트롤러 손 모델 애니메이션 구현
+    /// </summary>
     public class AnimeteHandOnInput : MonoBehaviour
     {
         #region Variables
