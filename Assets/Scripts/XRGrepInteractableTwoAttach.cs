@@ -13,7 +13,7 @@ namespace MyVrSample
         public Transform leftAttachTranfrom;
         public Transform rightAttachTranfrom;
         #endregion
-        protected override void OnSelectEntered(SelectEnterEventArgs args)
+        protected override void OnSelectEntering(SelectEnterEventArgs args)
         {
             //두개의 Attach Point를 잡는 손에 따라 구분해서 적용
             if(args.interactorObject.transform.CompareTag("LeftHand"))
