@@ -25,7 +25,21 @@ namespace MyVrSample
                 attachTransform = rightAttachTranfrom;
             }
 
-            base.OnSelectEntered(args);
+            base.OnSelectEntering(args);
         }
+        /*protected override void OnSelectEntered(SelectEnterEventArgs args)
+        {
+            //두개의 Attach Point를 잡는 손에 따라 구분해서 적용
+            if (args.interactorObject.transform.CompareTag("LeftHand"))
+            {
+                attachTransform = leftAttachTranfrom;
+            }
+            else if (args.interactorObject.transform.CompareTag("RightHand"))
+            {
+                attachTransform = rightAttachTranfrom;
+            }
+
+            base.OnSelectEntered(args);
+        }*/
     }
 }
