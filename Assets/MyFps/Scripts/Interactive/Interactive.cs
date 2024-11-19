@@ -1,59 +1,69 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-namespace Myfps
+namespace MyFps
 {
-    //인터렉티브를 액션을 구현하는 클래스
+    //인터렉티브 액션을 구현하는 클래스
     public abstract class Interactive : MonoBehaviour
     {
         protected abstract void DoAction();
 
         #region Variables
-        //actionUI
-        public GameObject actinUI;
-        public TextMeshProUGUI actionText;
-        public string action = "";
-        public TextMeshProUGUI keyText;
-        public GameObject extraCross;
-
         private float theDistance;
 
+        //action UI
+        public GameObject actionUI;
+        public TextMeshProUGUI actionText;
+        [SerializeField] private string action = "Action Text";
+
+        //true이면 Interactive 기능을 정지
+        protected bool unInteractive = false;
         #endregion
 
         private void Update()
         {
             theDistance = PlayerCasting.distanceFromTarget;
         }
+
         private void OnMouseOver()
         {
-            actionText.text = action;
-            if (theDistance <= 2)   //Player와 충돌체 사이의 거리
+            //거리가 2이하 일때
+            if (theDistance <= 2f && !unInteractive)
             {
-                ActionUI();
-                DoAction();
+                ShowActionUI();
+
+                /*if (Input.anyKey)
+                {
+                    HideActionUI();
+
+                    //Action
+                    DoAction();
+                }*/
             }
             else
             {
                 HideActionUI();
             }
         }
-        void ActionUI()
-        {
-            actinUI.SetActive(true);
-            keyText.gameObject.SetActive(true);
-            actionText.gameObject.SetActive(true);
-            extraCross.SetActive(true);
-        }
+
         private void OnMouseExit()
         {
             HideActionUI();
         }
-        protected void HideActionUI()
+
+        void ShowActionUI()
         {
-            actinUI.SetActive(false);
-            actionText.gameObject.SetActive(false);
-            keyText.gameObject.SetActive(false);
-            extraCross.SetActive(false);
+            actionUI.SetActive(true);
+            actionText.text = action;
+            //extraCross.SetActive(true);
+        }
+
+        void HideActionUI()
+        {
+            actionUI.SetActive(false);
+            actionText.text = "";
+            //extraCross.SetActive(false);
         }
     }
 }

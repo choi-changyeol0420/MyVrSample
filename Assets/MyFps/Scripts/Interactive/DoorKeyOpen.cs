@@ -1,58 +1,56 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using TMPro;
 
-namespace Myfps
+namespace MyFps
 {
     public class DoorKeyOpen : Interactive
     {
-        private Animator animator;
-        private Collider m_collider;
-        private PlayerState State;
-        public TextMeshProUGUI TextBox;
+        #region Variables
+        public TextMeshProUGUI textBox;
+        [SerializeField]
+        private string sequence = "You need the Key";
+        #endregion
 
-        private void Start()
-        {
-            animator = GetComponent<Animator>();
-            m_collider = GetComponent<BoxCollider>();
-            State = PlayerState.Instance;
-        }
         protected override void DoAction()
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            //문열기
+            if (PlayerStats.Instance.HasPuzzleItem(PuzzleKey.ROOM01_KEY))
             {
-                if (!State.HasPuzzleItem(PuzzleKey.ROOM01_KEY))
-                {
-                    StartCoroutine(LockDoor());
-                }
-                else if (State.HasPuzzleItem(PuzzleKey.ROOM01_KEY))
-                {
-                    OpenDoor();
-                }
-            }    
+                OpenDoor();
+            }
+            else
+            {
+                StartCoroutine(LockedDoor());
+            }
         }
+
         void OpenDoor()
         {
-            animator.SetBool("IsOpen", true);
-            AudioManager.Instance.Play("DoorBang");
-            keyText.gameObject.SetActive(false);
-            actionText.gameObject.SetActive(false);
-            m_collider.enabled = false;
+            this.GetComponent<BoxCollider>().enabled = false;
+
+            this.GetComponent<Animator>().SetBool("IsOpen", true);
+            AudioManager.Instance.Play("DoorOpen");
         }
-        IEnumerator LockDoor()
+
+        IEnumerator LockedDoor()
         {
+            //문 잠긴 소리
+            unInteractive = true;   //인터랙티브 기능 정지
             AudioManager.Instance.Play("DoorLocked");
-            keyText.gameObject.SetActive(false);
-            actionText.gameObject.SetActive(false);
-            yield return new WaitForSeconds(0.2f);
-            TextBox.enabled = true;
-            TextBox.text = "You need the Key";
-            yield return new WaitForSeconds(2);
-            TextBox.enabled = false;
-            TextBox.text = "";
-            keyText.gameObject.SetActive(true);
-            actionText.gameObject.SetActive(true);
+
+            yield return new WaitForSeconds(1f);
+
+            textBox.gameObject.SetActive(true);
+            textBox.text = sequence;
+
+            yield return new WaitForSeconds(2f);
+            
+            textBox.gameObject.SetActive(false);
+            textBox.text = "";
+
+            unInteractive = false;   //인터랙티브 기능 복원
         }
     }
 }

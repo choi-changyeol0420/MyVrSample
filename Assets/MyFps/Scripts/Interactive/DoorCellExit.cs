@@ -1,40 +1,48 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Myfps
+namespace MyFps
 {
     public class DoorCellExit : Interactive
     {
-        private Animator Door;
-        public AudioSource Audio;
-        private string loadtoScene = "MainScene02";
+        #region Variables
         public SceneFader fader;
+        [SerializeField] private string loadToScene = "MainScene02";
 
-        public AudioSource bgm01;
-        private Collider m_collider;
-        // Start is called before the first frame update
-        void Start()
+        private Animator animator;
+        private Collider m_Collider;
+        public AudioSource creakyDoor; //문여는 소리
+
+        public AudioSource bgm01;         //배경음
+        #endregion
+
+        private void Start()
         {
-            Door = GetComponent<Animator>();
-            m_collider = GetComponent<BoxCollider>();
+            //참조
+            animator = GetComponent<Animator>();
+            m_Collider = GetComponent<Collider>();
         }
+
         protected override void DoAction()
         {
-            actionText.text = action;
-            if (Input.GetKeyDown(KeyCode.E))    //여는 키
-            {
-                //Debug.Log("Open the Door");
-                Door.SetBool("IsOpen", true);
-                Audio.Play();
-                keyText.gameObject.SetActive(false);
-                actionText.gameObject.SetActive(false);
-                m_collider.enabled = false;
-                ChangeScene();
-            }
+            //1.문여는 애니메이션
+            //2.문여는 사운드
+            animator.SetBool("IsOpen", true);
+            m_Collider.enabled = false;
+
+            creakyDoor.Play();
+
+            ChangeScene();   
         }
-        private void ChangeScene()
+
+        void ChangeScene()
         {
+            //씬마무리, .... bmg stop
             bgm01.Stop();
-            fader.FadeTo(loadtoScene);
+
+            //다음씬으로 이동
+            fader.FadeTo(loadToScene);
         }
     }
 }

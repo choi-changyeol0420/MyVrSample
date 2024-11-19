@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Myfps
+namespace MyFps
 {
     public class AmmoUI : MonoBehaviour
     {
@@ -10,13 +8,15 @@ namespace Myfps
         public GameObject ammoUI;
         #endregion
 
-        private void Start()
+        // Start is called before the first frame update
+        void Start()
         {
             ShowAmmoUI();
         }
+
         private void ShowAmmoUI()
         {
-            ammoUI.SetActive(PlayerState.Instance.HasGun);
+            ammoUI.SetActive(PlayerStats.Instance.HasGun);
         }
     }
 }

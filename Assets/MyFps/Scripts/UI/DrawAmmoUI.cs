@@ -1,15 +1,18 @@
-using TMPro;
 using UnityEngine;
+using TMPro;
 
-namespace Myfps
+namespace MyFps
 {
     public class DrawAmmoUI : MonoBehaviour
     {
-        public TextMeshProUGUI AmmoText;
+        #region Variables
+        public TextMeshProUGUI ammoCount;
+        #endregion
+
         // Update is called once per frame
         void Update()
         {
-            AmmoText.text = PlayerState.Instance.AmmoCount.ToString();
+            ammoCount.text = PlayerStats.Instance.AmmoCount.ToString();
         }
     }
 }

@@ -1,4 +1,3 @@
-using UnityEditor.XR.Interaction.Toolkit;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -7,7 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 namespace MyVrSample
 {
     /// <summary>
-    /// Ïò§Î∏åÏ†ùÌä∏Î•º Ïû°ÏùÑ Îïå ÏòµÏÖã ÏúÑÏπò ÏÑ§Ï†ï
+    /// ø¿∫Í¡ß∆Æ∏¶ ¿‚¿ª∂ß ø…º¬ ¿ßƒ° º≥¡§
     /// </summary>
     public class XRGrabInteractableOffset : XRGrabInteractable
     {
@@ -33,21 +32,6 @@ namespace MyVrSample
             }
         }
 
-        protected override void OnSelectEntering(SelectEnterEventArgs args)
-        {
-            if(args.interactorObject is XRDirectInteractor)
-            {
-                attachTransform.position = args.interactorObject.transform.position;
-                attachTransform.rotation = args.interactorObject.transform.rotation;
-            }
-            else
-            {
-                attachTransform.localPosition = initialLocalPosition;
-                attachTransform.localRotation = initialLocalRotation;
-            }
-
-            base.OnSelectEntering(args);
-        }
         /*protected override void OnSelectEntered(SelectEnterEventArgs args)
         {
             if(args.interactorObject is XRDirectInteractor)
@@ -63,5 +47,20 @@ namespace MyVrSample
 
             base.OnSelectEntered(args);
         }*/
+        protected override void OnSelectEntering(SelectEnterEventArgs args)
+        {
+            if (args.interactorObject is XRDirectInteractor)
+            {
+                attachTransform.position = args.interactorObject.transform.position;
+                attachTransform.rotation = args.interactorObject.transform.rotation;
+            }
+            else
+            {
+                attachTransform.localPosition = initialLocalPosition;
+                attachTransform.localRotation = initialLocalRotation;
+            }
+
+            base.OnSelectEntering(args);
+        }
     }
 }

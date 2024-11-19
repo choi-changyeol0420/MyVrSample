@@ -385,6 +385,7 @@ MonoBehaviour:
   m_ApplyIfChildIsTarget: 1
   m_ClampToMaxDistance: 1
   m_MaxDistance: 20
+  m_PokeFilter: {fileID: 0}
 --- !u!1 &195190420571543371
 GameObject:
   m_ObjectHideFlags: 0

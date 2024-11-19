@@ -5,19 +5,19 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 namespace MyVrSample
 {
     /// <summary>
-    /// Teleport Rayë¥¼ ê´€ë¦¬í•˜ëŠ” í´ë˜ìŠ¤
+    /// Teleport Ray¸¦ °ü¸®ÇÏ´Â Å¬·¡½º
     /// </summary>
     public class ActivateTeleportRay : MonoBehaviour
     {
         #region Variables
-        public GameObject leftTeleportRay;              //í…”ë ˆí¬íŠ¸:ì™¼ìª½ Ray ì˜¤ë¸Œì íŠ¸
-        public GameObject rightTeleportRay;             //í…”ë ˆí¬íŠ¸:ì˜¤ë¥¸ìª½ Ray ì˜¤ë¸Œì íŠ¸
+        public GameObject leftTeleportRay;          //ÅÚ·¹Æ÷Æ® ¿ŞÂÊ Ray ¿ÀºêÁ§Æ®
+        public GameObject rightTeleportRay;         //ÅÚ·¹Æ÷Æ® ¿À¸¥ÂÊ Ray ¿ÀºêÁ§Æ®
 
-        public InputActionProperty leftActivate;        //ì™¼ìª½ ì»¨íŠ¸ë¡¤ëŸ¬ì˜ activate ì…ë ¥
-        public InputActionProperty rightActivate;       //ì˜¤ë¥¸ìª½ ì»¨íŠ¸ë¡¤ëŸ¬ì˜ activate ì…ë ¥
+        public InputActionProperty leftActivate;    //¿ŞÂÊ ÄÁÆ®·Ñ·¯ÀÇ Activate ÀÔ·Â
+        public InputActionProperty rightActivate;   //¿À¸¥ÂÊ ÄÁÆ®·Ñ·¯ÀÇ Activate ÀÔ·Â
 
-        public XRRayInteractor leftGrapRay;
-        public XRRayInteractor rightGrapRay;
+        public XRRayInteractor leftGrapLay;
+        public XRRayInteractor rightGrapLay;
         #endregion
 
         private void Update()
@@ -25,9 +25,9 @@ namespace MyVrSample
             float leftActivateValue = leftActivate.action.ReadValue<float>();
             float rightActivateValue = rightActivate.action.ReadValue<float>();
 
-            bool isLeftRayHovering = leftGrapRay.TryGetHitInfo(out Vector3 leftPos, out Vector3 leftNormal,
+            bool isLeftRayHovering = leftGrapLay.TryGetHitInfo(out Vector3 leftPos, out Vector3 leftNormal,
                 out int leftNumber, out bool leftValid);
-            bool isRightRayHovering = rightGrapRay.TryGetHitInfo(out Vector3 rightPos, out Vector3 rightNormal,
+            bool isRightRayHovering = rightGrapLay.TryGetHitInfo(out Vector3 rightPos, out Vector3 rightNormal,
                 out int rightNumber, out bool rightValid);
 
             leftTeleportRay.SetActive(!isLeftRayHovering && leftActivateValue > 0.1f);

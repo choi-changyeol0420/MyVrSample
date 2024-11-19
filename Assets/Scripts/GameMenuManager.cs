@@ -1,13 +1,11 @@
-using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Turning;
 
 namespace MyVrSample
 {
     /// <summary>
-    /// Í≤åÏûÑÏ§ë Î©îÎâ¥ UI Í¥ÄÎ¶¨ÌïòÎäî ÌÅ¥ÎûòÏä§
+    /// ∞‘¿”¡ﬂ ∏ﬁ¥∫ UI ∞¸∏Æ«œ¥¬ ≈¨∑°Ω∫
     /// </summary>
     public class GameMenuManager : MonoBehaviour
     {
@@ -22,6 +20,7 @@ namespace MyVrSample
         public SnapTurnProvider snapTurn;
         public ContinuousTurnProvider continuousTurn;
         #endregion
+
         private void Update()
         {
             if(showButton.action.WasPressedThisFrame())
@@ -29,17 +28,21 @@ namespace MyVrSample
                 Toggle();
             }
         }
+
         void Toggle()
         {
             gameMenu.SetActive(!gameMenu.activeSelf);
-            if (gameMenu.activeSelf)
+
+            //show º≥¡§
+            if(gameMenu.activeSelf)
             {
-                gameMenu.transform.position = head.position + new Vector3(head.forward.x,1.5f, head.forward.z).normalized * distance;
+                gameMenu.transform.position = head.position + new Vector3(head.forward.x, 0f, head.forward.z).normalized * distance;
                 gameMenu.transform.LookAt(new Vector3(head.position.x, gameMenu.transform.position.y, head.position.z));
-                gameMenu.transform.forward *= -1f;
+                gameMenu.transform.forward *= -1;
             }
-            
         }
+
+        //drop ∏ﬁ¥∫ º±≈√
         public void SetTurnTypeFromIndex(int index)
         {
             switch (index)
@@ -52,12 +55,13 @@ namespace MyVrSample
                     snapTurn.enabled = true;
                     continuousTurn.enabled = false;
                     break;
-            }    
-
+            }
         }
+
+        //Quit πˆ∆∞
         public void Quit()
         {
-            Debug.Log("Quit");
+            Debug.Log("Quit Game");
             Application.Quit();
         }
     }

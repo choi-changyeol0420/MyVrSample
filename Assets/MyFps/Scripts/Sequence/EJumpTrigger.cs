@@ -1,33 +1,37 @@
 using StarterAssets;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Myfps
+namespace MyFps
 {
     public class EJumpTrigger : MonoBehaviour
     {
-        public GameObject activityObject;
-        private GameObject thePlayer;
+        #region Variables
+        public GameObject thePlayer;
 
-        private void Start()
-        {
-            thePlayer = GameObject.Find("Player");
-        }
+        public GameObject activityObject;   //연출용 오브젝트
+        #endregion
+
         private void OnTriggerEnter(Collider other)
         {
-            StartCoroutine(PlaySqequence());
+            StartCoroutine(PlaySequence());
         }
-        IEnumerator PlaySqequence()
+
+        IEnumerator PlaySequence()
         {
-            //플레이어 캐릭터 비활성화
-            thePlayer.gameObject.GetComponent<FirstPersonController>().enabled = false;
-            activityObject.SetActive(true);     //연출용 오브젝트 활성화
+            //플레이 캐릭터 비활성화(플레이 멈춤)
+            thePlayer.GetComponent<FirstPersonController>().enabled = false;
+            activityObject.SetActive(true);         //연출용 오브젝트 활성화
+
             yield return new WaitForSeconds(2f);
-            Destroy(activityObject);            //연출용 오브젝트 킬
-            //플레이어 캐릭터 활성화
-            thePlayer.gameObject.GetComponent<FirstPersonController>().enabled = true;
-            //트리거 킬
+
+            //플레이 캐릭터 활성화(다시 플레이)
+            thePlayer.GetComponent<FirstPersonController>().enabled = true;
+
+            //연출용 오브젝트 킬
+            Destroy(activityObject);
+
+            //트리거 충돌체 비활성화 - 킬
             Destroy(gameObject);
         }
     }

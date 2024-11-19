@@ -2544,7 +2544,7 @@
                 {
                     "name": "GameMenu",
                     "type": "Button",
-                    "id": "6abe9e93-47f0-4fde-89f1-a070f677c9f1",
+                    "id": "5be7388d-1b95-4aa6-9565-15b478d8ceaa",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -2939,8 +2939,8 @@
                 },
                 {
                     "name": "",
-                    "id": "84986689-bb3d-4958-be0b-55cca706ad7c",
-                    "path": "<XRController>{LeftHand}/menuButton",
+                    "id": "7754e28f-6864-456f-ba1f-c99fdd82d8a9",
+                    "path": "<XRController>{LeftHand}/{MenuButton}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

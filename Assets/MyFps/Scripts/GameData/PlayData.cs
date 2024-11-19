@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Myfps
+namespace MyFps
 {
     //파일에 저장할 게임 플레이 데이터 목록
     [System.Serializable]
@@ -12,14 +10,14 @@ namespace Myfps
         public int ammoCount;
         public bool hasGun;
 
-        //..health
+        //..... health
 
         //생성자 - PlayerStats에 있는 데이터로 초기화
         public PlayData()
         {
-            sceneNumber = PlayerState.Instance.SceneNumber;
-            ammoCount = PlayerState.Instance.AmmoCount;
-            hasGun = PlayerState.Instance.HasGun;
+            sceneNumber = PlayerStats.Instance.SceneNumber;
+            ammoCount = PlayerStats.Instance.AmmoCount;
+            hasGun = PlayerStats.Instance.HasGun;
         }
     }
 }

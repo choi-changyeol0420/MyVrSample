@@ -1,17 +1,20 @@
-using StarterAssets;
 using System.Collections;
-using TMPro;
+using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using StarterAssets;
 
-namespace Myfps
+namespace MyFps
 {
     public class DOpening : MonoBehaviour
     {
+        #region Variables
         public SceneFader fader;
-        public TextMeshProUGUI TextBox;
+
         public GameObject thePlayer;
-        public GameObject pistol;
-        
+        public TextMeshProUGUI textBox;
+        #endregion
+
         // Start is called before the first frame update
         void Start()
         {
@@ -22,23 +25,23 @@ namespace Myfps
             StartCoroutine(SequencePlay());
         }
 
-        
         IEnumerator SequencePlay()
         {
-            pistol.SetActive(true);
             //플레이어 비활성화
-            thePlayer.GetComponent<FirstPersonController>().MoveSpeed = 0f;
-            thePlayer.GetComponent<FirstPersonController>().RotationSpeed = 0f;
+            thePlayer.GetComponent<FirstPersonController>().enabled = false;
 
             //배경음 시작
-            AudioManager.Instance.PlayBgm("PlayBGM");
+            AudioManager.Instance.PlayBgm("PlayBgm");
             //시퀀스 텍스트 초기화
-            TextBox.text = "";
-            yield return new WaitForSeconds(1);
+            textBox.text = "";
+
+            //1초후 페이드인 효과 시작
+            yield return new WaitForSeconds(1f);
             fader.FromFade();
-            yield return new WaitForSeconds(1);
-            thePlayer.GetComponent<FirstPersonController>().MoveSpeed = 4f;
-            thePlayer.GetComponent<FirstPersonController>().RotationSpeed = 1f;
+
+            //플레이어 활성화
+            yield return new WaitForSeconds(1f);
+            thePlayer.GetComponent<FirstPersonController>().enabled = true;
         }
     }
 }

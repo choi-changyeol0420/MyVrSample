@@ -2,63 +2,69 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Myfps
+namespace MyFps
 {
     public class PlayerController : MonoBehaviour, IDamageable
     {
         #region Variables
-        private float playerhealth;
-        private float maxhealth = 20;
+        public SceneFader fader;
+        [SerializeField] private string loadToScene = "GameOver";
+
+        //체력
+        [SerializeField] private float maxHealth = 20;
+        private float currentHealth;
+
         private bool isDeath = false;
 
-        public SceneFader scene;
-
         //데미지 효과
-        public GameObject damagefalsh;      //데미지 플래쉬 효과
+        public GameObject damageFlash;      //데미지 플래쉬 효과
         public AudioSource hurt01;          //데미지 사운드1
         public AudioSource hurt02;          //데미지 사운드2
-        public AudioSource hurt03;          //데미지 사운드3
+        public AudioSource hurt03;          //데미지 사운드2
 
         //무기
         public GameObject realPistol;
         #endregion
+
         private void Start()
         {
-            playerhealth = maxhealth;
-            isDeath = false;
+            //초기화
+            currentHealth = maxHealth;
 
             //무기획득
-            if(PlayerState.Instance.HasGun)
+            /*if(PlayerStats.Instance.HasGun)
             {
                 realPistol.SetActive(true);
-            }
+            }*/
         }
+
         public void TakeDamage(float damage)
         {
-            if (isDeath) return;
-            playerhealth -= damage;
-            Debug.Log($"player health: {playerhealth}");
+            currentHealth -= damage;
+            Debug.Log($"Player Health: {currentHealth}");
 
-            //데미지 효과 vfx,sfx
+            //데미지 효과
             StartCoroutine(DamageEffect());
 
-            if (playerhealth <= 0 && !isDeath)
+            if (currentHealth <= 0 && !isDeath)
             {
                 Die();
             }
         }
+
         void Die()
         {
-            isDeath = true;
-            Debug.Log("Game Over");
-            scene.FadeTo("GameOver");
+            Debug.Log($"{loadToScene}!!!");
+            //fader.FadeTo(loadToScene);
         }
+
         IEnumerator DamageEffect()
         {
-            damagefalsh.SetActive(true);
+            damageFlash.SetActive(true);
             CinemachineShake.Instance.ShakeCamera(1f, 1f);
+
             int randNumber = Random.Range(1, 4);
-            if (randNumber == 1)
+            if(randNumber == 1)
             {
                 hurt01.Play();
             }
@@ -70,9 +76,11 @@ namespace Myfps
             {
                 hurt03.Play();
             }
+
             yield return new WaitForSeconds(1f);
 
-            damagefalsh.SetActive(false);
+            damageFlash.SetActive(false);                
         }
+
     }
 }

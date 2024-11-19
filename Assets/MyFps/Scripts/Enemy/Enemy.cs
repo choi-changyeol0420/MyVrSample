@@ -1,108 +1,115 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Myfps
+namespace MyFps
 {
-    public enum RobotState
+    public enum EnemyState
     {
         E_Idle,     //대기
-        E_Walk,     //걷기    - 적을 타겟팅하지 못한 경우
+        E_Walk,     //걷기    - 적을 디텍팅하지 못한 경우
         E_Attack,   //스매시 공격
         E_Death,    //죽기
-        E_Chase     //추격(걷기) - 적을 타겟팅한 경우
+        E_Chase     //추격(걷기) - 적을 티텍팅한 경우
     }
 
     public class Enemy : MonoBehaviour, IDamageable
     {
-        #region VAriables
-        private Transform theplayer;
+        #region Variables
+        private Transform thePlayer;
         private Animator animator;
         private NavMeshAgent agent;
 
-        //로봇 현재 상태
-        private RobotState currentState;
-        //로봇 이전 상태
-        private RobotState beforeState;
+        //적 현재 상태
+        private EnemyState currentState;
+        //적 이전 상태
+        private EnemyState beforeState;
 
         //체력
-        [SerializeField] private float maxhealth = 20;
-        private float currenthealth;
-        private bool isDeath;
+        [SerializeField] private float maxHealth = 20;
+        private float currentHealth;
+
+        private bool isDeath = false;
 
         //공격
-        [SerializeField] private float AttackRange = 1.5f;
-        [SerializeField] private float AttackDamage = 5f;
+        [SerializeField] private float attackRange = 1.5f;      //공격 가능 범위
+        [SerializeField] private float attackDamage = 5f;       //공격 데미지
+
+        //패트롤
+        public Transform[] wayPoints;
+        private int nowWayPoint = 0;
+
+        private Vector3 startPosition; //시작위치, 타겟을 잃어을때 돌아오는 지점
 
         //적 감지
         private bool isAiming = false;
         public bool IsAiming
         {
             get { return isAiming; }
-            private set 
-            {
-                isAiming = value; 
-
+            private set {
+                isAiming = value;
             }
         }
-        [SerializeField] private float Range = 20f;
-        //패트롤
-        public Transform[] wayPoints;
-        private int nowWayPoint = 0;
 
-        private Vector3 startpoistion;  //시작위치, 타겟을 읿었을 때 돌아오는 지점
+        [SerializeField] private float detectDistance = 20f;
         #endregion
 
         private void Start()
         {
             //참조
-            theplayer = GameObject.Find("Player").transform;
+            thePlayer = GameObject.Find("Player").transform;
             animator = GetComponent<Animator>();
             agent = GetComponent<NavMeshAgent>();
 
             //초기화
-            currenthealth = maxhealth;
-            startpoistion = transform.position;
+            currentHealth = maxHealth;
+            startPosition = transform.position;
+            nowWayPoint = 0;
 
-            if(wayPoints.Length > 0)
+            if (wayPoints.Length > 0)
             {
-                SetState(RobotState.E_Walk);
+                SetState(EnemyState.E_Walk);
                 GoNextPoint();
             }
             else
             {
-                SetState(RobotState.E_Idle);
+                SetState(EnemyState.E_Idle);
             }
         }
+
         private void Update()
         {
-            if (isDeath) return;
-            float distance = Vector3.Distance(theplayer.transform.position, transform.position);
-            if(Range > 0)
+            if (isDeath)
+                return;
+
+            //타겟 지정            
+            float distance = Vector3.Distance(thePlayer.transform.position, transform.position);
+            if (detectDistance > 0)
             {
-                IsAiming = distance <= Range;
-            }
-            if (distance <= AttackRange)
+                IsAiming = distance <= detectDistance;
+            }            
+
+            if (distance <= attackRange)
             {
-                SetState(RobotState.E_Attack);
+                SetState(EnemyState.E_Attack);
                 agent.SetDestination(this.transform.position);
             }
-            else if (Range > 0)
+            else if (detectDistance > 0)
             {
                 if(IsAiming)
                 {
-                    SetState(RobotState.E_Chase);
+                    SetState(EnemyState.E_Chase);
                 }
             }
+
             switch (currentState)
             {
-                case RobotState.E_Idle:
+                case EnemyState.E_Idle:
                     break;
 
-                case RobotState.E_Walk:
-                    //도착판정
+                case EnemyState.E_Walk:
+                    //도착 판정
                     if(agent.remainingDistance <= 0.2f)
                     {
                         if (wayPoints.Length > 0)
@@ -111,87 +118,97 @@ namespace Myfps
                         }
                         else
                         {
-                            SetState(RobotState.E_Idle);
-                        }
+                            SetState(EnemyState.E_Idle);
+                        }   
                     }
                     break;
 
-                case RobotState.E_Attack:
-                    if (distance > AttackRange)
+                case EnemyState.E_Attack:
+                    transform.LookAt(thePlayer.position);
+                    if (distance > attackRange)
                     {
-                        SetState(RobotState.E_Chase);
+                        SetState(EnemyState.E_Chase);
                     }
                     break;
-
-                case RobotState.E_Chase:
-                    if(Range > 0 && !IsAiming)
+                
+                case EnemyState.E_Chase:
+                    if(detectDistance > 0 && !IsAiming)
                     {
-                        GoStartPosition();
+                        GoStartPostion();
                         return;
                     }
+
                     //플레이어 위치 업데이트
-                    agent.SetDestination(theplayer.position);
+                    agent.SetDestination(thePlayer.position);
                     break;
             }
         }
-        public void SetState(RobotState robotstate)
+
+        //적의 상태 변경
+        public void SetState(EnemyState newState)
         {
-            if(isDeath) return;
-            //현재 상태 체크
-            if (currentState == robotstate)
+            if (isDeath)
                 return;
+
+            //현재 상태 체크
+            if (currentState == newState)
+                return;
+
             //이전 상태 저장
             beforeState = currentState;
             //상태 변경
-            currentState = robotstate;
+            currentState = newState;
+
             //상태 변경에 따른 구현 내용
-            if(currentState == RobotState.E_Chase)
+            if (currentState == EnemyState.E_Chase)
             {
-                animator.SetInteger("EnemyState", 1);      //애니메이션 걷기 동작
+                animator.SetInteger("EnemyState", 1);   //애니메이션 걷기 동작
                 animator.SetLayerWeight(1, 1f);
             }
             else
             {
-                animator.SetInteger("EnemyState", (int)robotstate);
+                animator.SetInteger("EnemyState", (int)newState);
                 animator.SetLayerWeight(1, 0f);
             }
-            //agent초기화
+
+            //Agent 초기화
             agent.ResetPath();
+        }
+
+        private void Attack()
+        {
+            //Debug.Log("플레이어에게 데미지를 준다");
+            IDamageable damageable = thePlayer.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                damageable.TakeDamage(attackDamage);
+            }
         }
 
         public void TakeDamage(float damage)
         {
-            currenthealth -= damage;
-            Debug.Log($"Remain Health: {currenthealth}");
-            if (currenthealth <= 0 && !isDeath)
+            currentHealth -= damage;
+            //Debug.Log($"Enemy Health: {currentHealth}");
+
+            if (currentHealth <= 0 && !isDeath)
             {
                 Die();
             }
         }
-        void Die()
+
+        private void Die()
         {
-            SetState(RobotState.E_Death);
+            SetState(EnemyState.E_Death);
+
             isDeath = true;
-            Debug.Log("Robot Death!!");
+
+            //충돌체 제거
             transform.GetComponent<BoxCollider>().enabled = false;
+            //킬
             Destroy(gameObject, 3f);
         }
-        void Attack()
-        {
-            float distance = Vector3.Distance(theplayer.transform.position, transform.position);
-            IDamageable damageable = theplayer.GetComponent<IDamageable>();
-            if (distance > AttackRange)
-            {
-                return;
-            }
-            else if (distance <= AttackRange)
-            {
-                if (damageable != null)
-                {
-                    damageable.TakeDamage(AttackDamage);
-                }
-            }
-        }
+
+        //다음 목표 지점으로 이동
         private void GoNextPoint()
         {
             nowWayPoint++;
@@ -201,17 +218,24 @@ namespace Myfps
             }
             agent.SetDestination(wayPoints[nowWayPoint].position);
         }
-        public void GoStartPosition()
+
+        //제자리로 돌아가기
+        public void GoStartPostion()
         {
-            if(isDeath) return;
-            SetState(RobotState.E_Walk);
+            if (isDeath)
+                return;
+
+            SetState(EnemyState.E_Walk);
+
             nowWayPoint = 0;
-            agent.SetDestination(startpoistion);
+            agent.SetDestination(startPosition);
         }
-        void OnDrawGizmosSelected()
-        { 
+
+        //적 감지 반경
+        private void OnDrawGizmosSelected()
+        {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, Range);
+            Gizmos.DrawWireSphere(transform.position, detectDistance);
         }
     }
 }

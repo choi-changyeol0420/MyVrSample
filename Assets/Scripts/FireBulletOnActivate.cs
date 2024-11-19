@@ -10,21 +10,32 @@ namespace MyVrSample
     public class FireBulletOnActivate : MonoBehaviour
     {
         #region Variables
-        public GameObject buiietPrefab;
+        public GameObject bulletPrefab;
         public Transform firePoint;
-        public float fireSpeed = 20f;
+        public Collider box;
+        public GameObject ammobox;
+        public float bulletSpeed = 20f;
         #endregion
 
         private void Start()
         {
-            XRGrabInteractable grabInteractable = GetComponent<XRGrabInteractable>();
+            XRGrabInteractable grabInteractable = this.GetComponent<XRGrabInteractable>();
             grabInteractable.activated.AddListener(Fire);
         }
+
         void Fire(ActivateEventArgs args)
         {
-            GameObject bulletGo = Instantiate(buiietPrefab, firePoint.position, firePoint.rotation);
-            bulletGo.GetComponent<Rigidbody>().linearVelocity = firePoint.forward * fireSpeed;
+            GameObject bulletGo = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+            bulletGo.GetComponent<Rigidbody>().linearVelocity = firePoint.forward * bulletSpeed;
             Destroy(bulletGo, 5f);
+        }
+        private void OnTriggerEnter(Collider other)
+        {
+            other = box;
+            if(ammobox)
+            {
+                ammobox.SetActive(true);
+            }
         }
     }
 }

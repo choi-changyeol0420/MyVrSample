@@ -1,67 +1,66 @@
-using StarterAssets;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using StarterAssets;
 
-namespace Myfps
+namespace MyFps
 {
     public class PauseUI : MonoBehaviour
     {
-        private GameObject theplayer;
+        #region Variables
         public GameObject pauseUI;
+
         public SceneFader fader;
-        [SerializeField] private string lodetoname = "MainMenu";
-        public GameObject Sounds;
+        [SerializeField] private string loadToScene = "MainMenu";
+
+        private GameObject thePlayer;
+        #endregion
+
         private void Start()
         {
-            theplayer = GameObject.Find("Player");
+            //참조
+            thePlayer = GameObject.Find("Player");
         }
+
         private void Update()
         {
-            /*if(Input.GetKeyDown(KeyCode.Escape))
+            /*//
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Continue();
-            }
-            else if(Input.GetKeyDown(KeyCode.Return))
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
+                Toggle();
             }*/
         }
-        public void Continue()
+
+        public void Toggle()
         {
             pauseUI.SetActive(!pauseUI.activeSelf);
 
-            if (pauseUI.activeSelf)
+            if (pauseUI.activeSelf) //pause 창이 오픈 될때, 사운드? && !isSequence
             {
-                Time.timeScale = 0f;
+                thePlayer.GetComponent<FirstPersonController>().enabled = false;
+                
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
-                theplayer.GetComponent<FirstPersonController>().MoveSpeed = 0f;
-                theplayer.GetComponent<FirstPersonController>().RotationSpeed = 0f;
+
+                Time.timeScale = 0f;
             }
-            else
+            else //pause 창이 클로즈 될때
             {
-                Time.timeScale = 1f;
+                thePlayer.GetComponent<FirstPersonController>().enabled = true;
+
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-                theplayer.GetComponent<FirstPersonController>().MoveSpeed = 4f;
-                theplayer.GetComponent<FirstPersonController>().RotationSpeed = 1f;
+
+                Time.timeScale = 1f;
             }
         }
-        public void MainMenu()
+
+        public void Menu()
         {
             Time.timeScale = 1f;
-            //씬 종료 처리
-            if(AudioManager.Instance != null)
-            {
-                AudioManager.Instance.StopBgm();
-            }
-            else
-            {
-                Sounds.SetActive(false);
-            }
-            fader.FadeTo(lodetoname);
+
+            //씬 종료 처리 ...
+            AudioManager.Instance.StopBgm();
+
+            fader.FadeTo(loadToScene);
         }
     }
 }
