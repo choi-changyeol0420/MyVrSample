@@ -11,6 +11,7 @@ namespace MyFps
         #region Variables
         public static float distanceFromTarget = Mathf.Infinity;
         [SerializeField] private float toTarget;    //거리 숫자 보기
+        public LayerMask mask;
         #endregion
 
         private void Start()
@@ -23,9 +24,14 @@ namespace MyFps
         void Update()
         {
             RaycastHit hit;
-            if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit))
+            if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 100f, mask))
             {
                 distanceFromTarget = hit.distance;
+                toTarget = distanceFromTarget;
+            }
+            else
+            {
+                distanceFromTarget = Mathf.Infinity;
                 toTarget = distanceFromTarget;
             }
         }

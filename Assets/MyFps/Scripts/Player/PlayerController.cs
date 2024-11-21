@@ -61,7 +61,6 @@ namespace MyFps
         IEnumerator DamageEffect()
         {
             damageFlash.SetActive(true);
-            CinemachineShake.Instance.ShakeCamera(1f, 1f);
 
             int randNumber = Random.Range(1, 4);
             if(randNumber == 1)

@@ -12,8 +12,6 @@ namespace MyVrSample
         #region Variables
         public GameObject bulletPrefab;
         public Transform firePoint;
-        public Collider box;
-        public GameObject ammobox;
         public float bulletSpeed = 20f;
         #endregion
 
@@ -28,14 +26,6 @@ namespace MyVrSample
             GameObject bulletGo = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
             bulletGo.GetComponent<Rigidbody>().linearVelocity = firePoint.forward * bulletSpeed;
             Destroy(bulletGo, 5f);
-        }
-        private void OnTriggerEnter(Collider other)
-        {
-            other = box;
-            if(ammobox)
-            {
-                ammobox.SetActive(true);
-            }
         }
     }
 }

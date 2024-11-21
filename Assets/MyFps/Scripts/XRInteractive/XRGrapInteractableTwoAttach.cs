@@ -2,16 +2,18 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
-namespace MyVrSample
+namespace MyFps
 {
     /// <summary>
     /// 두개의 Attach Point 구현
     /// </summary>
-    public class XRGrepInteractableTwoAttach : XRGrabInteractable
+    public class XRGrapInteractableTwoAttach : GrabInteractable
     {
         #region Variables
         public Transform leftAttachTranfrom;
         public Transform rightAttachTranfrom;
+
+        
         #endregion
         protected override void OnSelectEntering(SelectEnterEventArgs args)
         {
@@ -41,5 +43,9 @@ namespace MyVrSample
 
             base.OnSelectEntered(args);
         }*/
+        protected override void DoAction()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

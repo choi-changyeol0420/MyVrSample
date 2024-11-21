@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 namespace MyFps
 {
@@ -16,6 +17,9 @@ namespace MyFps
         public GameObject actionUI;
         public TextMeshProUGUI actionText;
         [SerializeField] private string action = "Action Text";
+        [SerializeField] private float offset = 0f;
+
+        private bool isHover = false;
 
         //true이면 Interactive 기능을 정지
         protected bool unInteractive = false;
@@ -33,7 +37,11 @@ namespace MyFps
         }
         protected virtual void Update()
         {
-            theDistance = PlayerCasting.distanceFromTarget;
+            if(unInteractive)
+                return;
+
+            //theDistance = PlayerCasting.distanceFromTarget;
+            theDistance = GetDistanceFormHead();
 
         }
         protected override void OnHoverEntered(HoverEnterEventArgs args)
@@ -42,53 +50,85 @@ namespace MyFps
                 return;
 
             base.OnHoverEntered(args);
-            ShowActionUI();
-            //Debug.Log("ShowAction");
+
+            /*if (args.interactorObject is XRDirectInteractor)
+            {
+                ShowActionUI();
+            }*/
+            
+            {
+                if (theDistance < 2.0f)
+                {
+                    ShowActionUI();
+                }
+                else if (theDistance > 2)
+                {
+                    HideActionUI();
+                }
+            }
+
         }
         protected override void OnHoverExited(HoverExitEventArgs args)
         {
-
             base.OnHoverExited(args);
+            //Debug.Log("HoverExit");
             HideActionUI();
-            //Debug.Log("HideAction");
+        }
+        protected override void OnSelectExited(SelectExitEventArgs args)
+        {
+            base.OnSelectExited(args);
+            GetComponent<BoxCollider>().isTrigger = false;
+            //Debug.Log("selectExit");
         }
         protected override void OnSelectEntered(SelectEnterEventArgs args)
         {
             base.OnSelectEntered(args);
-
-            HideActionUI();
-
-            DoAction();
+            //Debug.Log("selectEnter");
+            if (theDistance < 2.0)
+            {
+                DoAction();
+                HideActionUI();
+            }
         }
 
         void ShowActionUI()
         {
+            unInteractive = true;
             actionUI.SetActive(true);
-
             //theDistance 와 오브젝트까지의 거리를 계산하여
             float distance = Vector3.Distance(Head.position, transform.position);
             if (distance < theDistance)
             {
                 actionUI.transform.position = Head.position
-                + new Vector3(Head.forward.x, 0f, Head.forward.z).normalized * (distance - 0.02f);
+                + new Vector3(Head.forward.x, 0f, Head.forward.z).normalized * (distance - offset);
             }
             else
             {
                 actionUI.transform.position = Head.position
-                + new Vector3(Head.forward.x, 0f, Head.forward.z).normalized * (theDistance - 0.02f);
+                + new Vector3(Head.forward.x, 0f, Head.forward.z).normalized * (theDistance - offset);
             }
             actionUI.transform.LookAt(new Vector3(Head.position.x, actionUI.transform.position.y, Head.position.z));
             actionUI.transform.forward *= -1;
 
             actionText.text = action;
-
         }
 
         void HideActionUI()
         {
+            if (!isHover)
+                return;
+            isHover = false;
             actionUI.SetActive(false);
             actionText.text = "";
             //extraCross.SetActive(false);
         }
+        float GetDistanceFormHead()
+        {
+            float distance = 0f;
+            Vector3 pos = new Vector3(transform.position.x, Head.position.y, transform.position.z);
+            distance = Vector3.Distance(pos, Head.position);
+            return distance;
+        }
     }
 }
+
